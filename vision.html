@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>NVC - Organigramme du Bureau</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #f0f7f0 0%, #e6ede5 100%);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1a2e1f;
+        }
+        .diagram-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(1px);
+            border-radius: 3rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            padding: 2rem 1.8rem;
+        }
+        .header { text-align: center; margin-bottom: 3rem; }
+        .logo-symbol {
+            background: linear-gradient(135deg, #1e4620, #2b7a2d);
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem auto;
+            box-shadow: 0 15px 25px -8px rgba(0,0,0,0.3);
+        }
+        .logo-symbol span { font-size: 2.8rem; font-weight: 800; color: #FFD966; }
+        .logo-text h1 {
+            font-size: 2rem;
+            background: linear-gradient(120deg, #1f4f1f, #3a9b3a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .subhead {
+            background: rgba(255,255,240,0.7);
+            display: inline-block;
+            padding: 0.4rem 1.8rem;
+            border-radius: 60px;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        .org-title { text-align: center; font-size: 1.7rem; font-weight: 700; margin: 1.5rem 0 2rem; }
+        .org-title:after { content: ''; display: block; width: 80px; height: 4px; background: #2b7a2d; border-radius: 4px; margin: 12px auto 0; }
+        
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+        .member-card {
+            background: white;
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: 0 12px 24px -12px rgba(0,0,0,0.15);
+            transition: 0.3s;
+            border: 1px solid rgba(80,120,70,0.2);
+            display: flex;
+            flex-direction: column;
+        }
+        .member-card:hover { transform: translateY(-6px); }
+        .photo-slot {
+            background: #f2f8ef;
+            padding: 1.5rem 1rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-bottom: 1px solid #e2f0de;
+        }
+        .photo-circle {
+            width: 110px; height: 110px;
+            border-radius: 50%;
+            background: #e0edda;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid white;
+            outline: 1px solid #bddcaf;
+            margin-bottom: 8px;
+        }
+        .member-img { width: 100%; height: 100%; object-fit: cover; }
+        .edit-photo-btn {
+            background: #2b7a2d;
+            border: none;
+            color: white;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 40px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .phone-field {
+            margin: 8px 0 4px;
+            width: 90%;
+            padding: 6px 10px;
+            border-radius: 40px;
+            border: 1px solid #bddcaf;
+            font-size: 0.8rem;
+            text-align: center;
+            font-family: monospace;
+        }
+        .card-info { padding: 1rem; text-align: center; }
+        .post-title { font-weight: 800; font-size: 1rem; margin: 0.3rem 0; }
+        .post-sub { font-size: 0.7rem; color: #6b8c64; }
+        .post-number-badge {
+            background: #2b7a2d;
+            color: white;
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        
+        .toolbar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .toolbar button {
+            background: #2b6e2f;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .footer-note {
+            margin-top: 2.5rem;
+            text-align: center;
+            font-size: 0.8rem;
+            background: #e2f0df;
+            padding: 1rem;
+            border-radius: 2rem;
+        }
+        @media (max-width: 700px) { .grid-cards { gap: 1rem; } }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .toolbar, .edit-photo-btn, .footer-note { display: none !important; }
+            .member-card { break-inside: avoid; page-break-inside: avoid; }
+            .diagram-container { box-shadow: none; padding: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="diagram-container" id="captureArea">
+    <div class="header">
+        <div class="logo-symbol"><span>NVC</span></div>
+        <div class="logo-text"><h1>NOUVELLE VISION COMMUNALE</h1><p><i class="fas fa-leaf"></i> Engagement & Proximité</p></div>
+        <div class="subhead"><i class="fas fa-users"></i> Bureau Politique Exécutif</div>
+    </div>
+
+    <div class="toolbar">
+        <button id="exportJpgBtn"><i class="fas fa-camera"></i> Exporter en JPG</button>
+        <button id="printPdfBtn"><i class="fas fa-file-pdf"></i> Imprimer / PDF</button>
+    </div>
+
+    <div class="org-title">ORGANIGRAMME DU BUREAU</div>
+    <div class="grid-cards" id="membersGrid"></div>
+    <div class="footer-note">
+        <i class="fas fa-camera"></i> Cliquez sur une photo pour la changer (galerie ou appareil photo).<br>
+        <i class="fas fa-phone"></i> Modifiez votre numéro directement dans le champ.<br>
+        <i class="fas fa-download"></i> Exportez en JPG ou imprimez en PDF.
+    </div>
+</div>
+
+<script>
+    const positions = [
+        { id: 1, title: "Le Coordinateur", hint: "Coordination générale" },
+        { id: 2, title: "Le Vice-Coordinateur", hint: "Appui stratégique" },
+        { id: 3, title: "Le Secrétaire Général", hint: "Administration & coordination" },
+        { id: 4, title: "Le Trésorier(e)", hint: "Gestion financière" },
+        { id: 5, title: "Le Secrétaire Chargé de la Communication", hint: "Médias & relations publiques" },
+        { id: 6, title: "Le Secrétaire Adjoint chargé de la Communication", hint: "Support communication" },
+        { id: 7, title: "Le Secrétaire Chargé à la Mobilisation et à l'Implantation", hint: "Territoire & adhésions" },
+        { id: 8, title: "Le Secrétaire Adjoint Chargé à la Mobilisation et à l'Implantation", hint: "Appui implantation" },
+        { id: 9, title: "Le Secrétaire Chargé de la Formation", hint: "Capacitation & ateliers" },
+        { id: 10, title: "Le Secrétaire Chargé de l'Environnement et de Salubrité", hint: "Écologie & cadre de vie" },
+        { id: 11, title: "Le Secrétaire Chargé des Affaires Sociales", hint: "Action sociale & solidarité" },
+        { id: 12, title: "Le Secrétaire des Femmes", hint: "Leadership féminin" },
+        { id: 13, title: "Le Secrétaire Chargé de la Jeunesse", hint: "Engagement jeune" },
+        { id: 14, title: "Le Secrétaire Chargé des Relations avec les Sages", hint: "Mémoire & conseil" },
+        { id: 15, title: "Le Secrétaire Chargé des affaires Politiques et Juridiques", hint: "Veille légale & politique" },
+        { id: 16, title: "Le Secrétaire Chargé des Relations avec les organisations Socio-politiques", hint: "Partenariat & coalition" }
+    ];
+
+    // Stockage local
+    function getStoredPhone(id) { return localStorage.getItem(`nvc_phone_${id}`) || ""; }
+    function setStoredPhone(id, phone) { localStorage.setItem(`nvc_phone_${id}`, phone); }
+    function getStoredPhoto(id) { return localStorage.getItem(`nvc_photo_${id}`); }
+    function setStoredPhoto(id, base64) { localStorage.setItem(`nvc_photo_${id}`, base64); }
+
+    function getDefaultAvatarSVG() {
+        return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23CBE5C1' stroke='%23ffffff' stroke-width='2.5'/%3E%3Cpath fill='%23417B3A' d='M50 30c-8.8 0-16 7.2-16 16s7.2 16 16 16 16-7.2 16-16-7.2-16-16-16zm0 28c-6.6 0-12-5.4-12-12s5.4-12 12-12 12 5.4 12 12-5.4 12-12 12z'/%3E%3Ccircle fill='%23417B3A' cx='50' cy='30' r='4'/%3E%3Cpath fill='%23417B3A' d='M50 65c-12 0-22.5 6-28 15h56c-5.5-9-16-15-28-15z'/%3E%3C/svg%3E`;
+    }
+
+    function buildCard(pos) {
+        const card = document.createElement('div');
+        card.className = 'member-card';
+        if (pos.id <= 4) card.classList.add('leadership');
+
+        // Photo
+        const photoSlot = document.createElement('div');
+        photoSlot.className = 'photo-slot';
+        const photoCircle = document.createElement('div');
+        photoCircle.className = 'photo-circle';
+        const img = document.createElement('img');
+        img.className = 'member-img';
+        const storedPhoto = getStoredPhoto(pos.id);
+        img.src = storedPhoto || getDefaultAvatarSVG();
+        photoCircle.appendChild(img);
+        
+        const changePhotoBtn = document.createElement('button');
+        changePhotoBtn.className = 'edit-photo-btn';
+        changePhotoBtn.innerHTML = '<i class="fas fa-camera"></i> Changer la photo';
+        const fileInputLocal = document.createElement('input');
+        fileInputLocal.type = 'file';
+        fileInputLocal.accept = 'image/*';
+        fileInputLocal.style.display = 'none';
+        changePhotoBtn.onclick = () => fileInputLocal.click();
+        fileInputLocal.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const base64 = ev.target.result;
+                    setStoredPhoto(pos.id, base64);
+                    img.src = base64;
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        
+        // Téléphone
+        const phoneInput = document.createElement('input');
+        phoneInput.type = 'tel';
+        phoneInput.className = 'phone-field';
+        phoneInput.placeholder = 'Numéro de téléphone';
+        phoneInput.value = getStoredPhone(pos.id);
+        phoneInput.addEventListener('change', () => {
+            setStoredPhone(pos.id, phoneInput.value);
+        });
+        
+        photoSlot.appendChild(photoCircle);
+        photoSlot.appendChild(changePhotoBtn);
+        photoSlot.appendChild(fileInputLocal);
+        photoSlot.appendChild(phoneInput);
+        
+        // Infos
+        const cardInfo = document.createElement('div');
+        cardInfo.className = 'card-info';
+        const badge = document.createElement('div');
+        badge.className = 'post-number-badge';
+        badge.textContent = pos.id;
+        const titleElem = document.createElement('div');
+        titleElem.className = 'post-title';
+        titleElem.textContent = pos.title;
+        const hintElem = document.createElement('div');
+        hintElem.className = 'post-sub';
+        hintElem.innerHTML = `<i class="fas fa-bullhorn"></i> ${pos.hint}`;
+        cardInfo.appendChild(badge);
+        cardInfo.appendChild(titleElem);
+        cardInfo.appendChild(hintElem);
+        
+        card.appendChild(photoSlot);
+        card.appendChild(cardInfo);
+        return card;
+    }
+
+    const grid = document.getElementById('membersGrid');
+    positions.forEach(p => grid.appendChild(buildCard(p)));
+
+    // Export JPG
+    document.getElementById('exportJpgBtn').addEventListener('click', () => {
+        const element = document.getElementById('captureArea');
+        html2canvas(element, { scale: 2, backgroundColor: '#f0f7f0', useCORS: true }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'organigramme_NVC.jpg';
+            link.href = canvas.toDataURL('image/jpeg', 0.9);
+            link.click();
+        }).catch(err => alert("Erreur lors de l'export : " + err));
+    });
+
+    // Impression / PDF
+    document.getElementById('printPdfBtn').addEventListener('click', () => {
+        window.print();
+    });
+</script>
+</body>
+</html>
